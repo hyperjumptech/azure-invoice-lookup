@@ -1,0 +1,46 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "AZURE_TENANT_ID",
+    "AZURE_CLIENT_ID",
+    "AZURE_CLIENT_SECRET",
+    "AZURE_BILLING_ACCOUNT_ID",
+    "AZURE_BILLING_PROFILE_ID",
+    "AZURE_BILLING_INVOICE_SECTION_ID",
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_USERNAME",
+    "SMTP_PASSWORD",
+    "SMTP_FROM",
+    "JWT_SECRET",
+    "ALLOWED_EMAIL_ADDRESSES",
+    "BASE_URL",
+    "NODE_ENV",
+    "NEXT_PUBLIC_NO_EMAIL_SEND",
+    "API_HEALTH_KEY"
+  ],
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "test": {
+      "dependsOn": ["^test"]
+    },
+    "coverage": {
+      "dependsOn": ["^coverage"]
+    }
+  }
+}

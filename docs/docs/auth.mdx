@@ -1,0 +1,19 @@
+---
+title: Authentication
+---
+
+The application uses a password-less authentication system without the need for database.
+
+## The flow
+
+- User enters email address
+- System checks if email is in `ALLOWED_EMAIL_ADDRESSES`
+- If allowed, creates 5-minute JWT magic link token
+- Sends email with magic link via SMTP
+- User clicks link, which verifies the token
+- System creates 1-day session JWT and sets HTTP-only cookie
+- User is redirected to `/invoice`
+
+## Allowed email addresses
+
+To prevent unauthorized access, the application only allows access to email addresses in the `ALLOWED_EMAIL_ADDRESSES` environment variable. If you want to add a new email address, you need to update the environment variable and rebuild and redeploy the application.
