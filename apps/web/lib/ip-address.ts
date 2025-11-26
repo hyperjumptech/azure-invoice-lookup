@@ -15,14 +15,12 @@ export const getIpBeforeAction = async (
     const ipJson = await ipResponse.json();
     const ip = ipJson.ip;
 
-    const geoResponse = await fetch(`https://ip-api.com/json/${ip}`);
-
     // Use our server-side API route to avoid CORS issues
-    // const geoResponse = await fetch(`/api/ip-geo?ip=${encodeURIComponent(ip)}`);
+    const geoResponse = await fetch(`/api/ip-geo?ip=${encodeURIComponent(ip)}`);
 
-    // if (!geoResponse.ok) {
-    //   throw new Error(`Failed to fetch geo data: ${geoResponse.statusText}`);
-    // }
+    if (!geoResponse.ok) {
+      throw new Error(`Failed to fetch geo data: ${geoResponse.statusText}`);
+    }
 
     const geoJson = await geoResponse.json();
 

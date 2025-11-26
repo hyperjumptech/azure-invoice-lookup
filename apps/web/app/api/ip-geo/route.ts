@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     }
 
     // Fetch IP geolocation data from ip-api.com
-    const geoResponse = await fetch(`https://ip-api.com/json/${ip}`, {
+    const geoResponse = await fetch(`http://ip-api.com/json/${ip}`, {
       headers: {
         Accept: "application/json",
       },
@@ -38,4 +38,3 @@ export async function GET(request: Request) {
     );
   }
 }
-
