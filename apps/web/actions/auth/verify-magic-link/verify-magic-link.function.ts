@@ -7,6 +7,8 @@ import {
   getSessionCookieOptions,
 } from "@workspace/auth";
 import { updateTag } from "next/cache";
+import { logActivity } from "@/lib/log-activity";
+import { JWTPayload } from "jose";
 
 /**
  * The schema of the data for the verify magic link function.
@@ -14,6 +16,11 @@ import { updateTag } from "next/cache";
  */
 export const verifyMagicLinkFunctionSchema = z.object({
   token: z.string().min(1, "Token is required"),
+  ip_address: z.ipv4("Invalid IP address"),
+  geo_data: z
+    .string()
+    .transform((val) => JSON.parse(val))
+    .optional(),
 });
 
 /**
@@ -24,10 +31,14 @@ export const verifyMagicLinkFunctionSchema = z.object({
 export async function verifyMagicLinkFunction(
   data: z.infer<typeof verifyMagicLinkFunctionSchema>
 ): Promise<{ success: boolean; error: string | null }> {
+  let payload: JWTPayload | null = null;
+  const {
+    token: validatedToken,
+    ip_address: validatedIpAddress,
+    geo_data: validatedGeoData,
+  } = data;
   try {
-    const { token: validatedToken } = data;
-
-    const payload = await verifyMagicLinkToken(validatedToken);
+    payload = await verifyMagicLinkToken(validatedToken);
 
     if (!payload || typeof payload.email !== "string") {
       throw new Error("Invalid token");
@@ -53,6 +64,24 @@ export async function verifyMagicLinkFunction(
   }
 
   updateTag("login-logout-button");
+
+  if (payload && typeof payload.email === "string") {
+    try {
+      await logActivity(
+        "login",
+        {
+          email: payload.email,
+          ipAddress: validatedIpAddress,
+          geoData: validatedGeoData,
+        },
+        {
+          email: payload.email,
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return {
     success: true,

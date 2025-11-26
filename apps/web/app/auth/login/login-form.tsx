@@ -3,11 +3,14 @@ import { Button } from "@workspace/ui/components/button";
 import { sendMagicLinkFormAction } from "@/actions/auth/send-magic-link/send-magic-link.server.function";
 import { useResettableActionState } from "use-resettable-action-state";
 import { env } from "@workspace/env";
+import { getIpBeforeAction } from "@/lib/ip-address";
 
 export const LoginForm = () => {
   const [state, formAction, isPending, , payload] = useResettableActionState(
     sendMagicLinkFormAction,
-    { success: false, error: null }
+    { success: false, error: null },
+    undefined,
+    getIpBeforeAction
   );
 
   return (
@@ -40,7 +43,7 @@ export const LoginForm = () => {
         <div className="text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-md px-3 py-2">
           {env.NEXT_PUBLIC_NO_EMAIL_SEND
             ? "Email sending disabled. See the server log to see the magic link."
-            : "Check your email! We've sent you a magic link to sign in."}
+            : "Check your email inbox! We've sent you a magic link to sign in. Please check your spam folder if you don't see it."}
         </div>
       )}
 

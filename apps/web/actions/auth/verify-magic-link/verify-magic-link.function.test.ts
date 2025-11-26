@@ -4,6 +4,17 @@ import { cookies } from "next/headers";
 import { updateTag } from "next/cache";
 import { createMagicLinkToken, SESSION_COOKIE_NAME } from "@workspace/auth";
 
+const fakeIpData = {
+  ip_address: "127.0.0.1",
+  geo_data: {
+    ip: "127.0.0.1",
+    city: "Test City",
+    region: "Test Region",
+    country: "Test Country",
+    isp: "Test ISP",
+  },
+};
+
 // Mock the @workspace/auth module
 vi.mock("@workspace/auth", async () => {
   const actual = await vi.importActual("@workspace/auth");
@@ -40,6 +51,7 @@ describe("Auth Actions", () => {
 
       const result = await verifyMagicLinkFunction({
         token: validToken,
+        ...fakeIpData,
       });
 
       expect(result).toEqual({
@@ -62,6 +74,7 @@ describe("Auth Actions", () => {
     it("should return an error for an invalid token", async () => {
       const result = await verifyMagicLinkFunction({
         token: "invalid-token",
+        ...fakeIpData,
       });
 
       expect(result).toEqual({
@@ -79,6 +92,7 @@ describe("Auth Actions", () => {
       // For testing purposes, we'll mock this by creating an invalid token
       const result = await verifyMagicLinkFunction({
         token: expiredToken + "corrupted",
+        ...fakeIpData,
       });
 
       expect(result).toEqual({
@@ -90,6 +104,7 @@ describe("Auth Actions", () => {
     it("should return an error when token is missing", async () => {
       const result = await verifyMagicLinkFunction({
         token: "",
+        ...fakeIpData,
       });
 
       expect(result).toEqual({
@@ -104,6 +119,7 @@ describe("Auth Actions", () => {
 
       await verifyMagicLinkFunction({
         token: validToken,
+        ...fakeIpData,
       });
 
       // Verify that a session token was created and set

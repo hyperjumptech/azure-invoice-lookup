@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { updateTag } from "next/cache";
+import { logActivity } from "@/lib/log-activity";
+import { getSessionEmail } from "@/lib/auth";
 
 /**
  * The schema of the data for the logout function.
@@ -21,6 +23,7 @@ export const logoutFunction = async (
   data: z.infer<typeof logoutFunctionSchema>
 ): Promise<{ success: false; error: string } | undefined> => {
   const redirectTo = data.redirectTo || "/auth/login";
+  const email = await getSessionEmail();
   try {
     const cookieStore = await cookies();
     cookieStore.delete(SESSION_COOKIE_NAME);
@@ -30,6 +33,24 @@ export const logoutFunction = async (
       success: false,
       error: "Failed to logout",
     };
+  }
+
+  try {
+    if (email) {
+      await logActivity(
+        "logout",
+        {
+          email,
+          ipAddress: "",
+          geoData: {},
+        },
+        {
+          email,
+        }
+      );
+    }
+  } catch (error) {
+    console.error("Error logging activity", error);
   }
 
   updateTag("login-logout-button");

@@ -1,6 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { sendMagicLinkFunction } from "./send-magic-link.function";
 
+const fakeIpData = {
+  ip_address: "127.0.0.1",
+  geo_data: {
+    ip: "127.0.0.1",
+    city: "Test City",
+    region: "Test Region",
+    country: "Test Country",
+    isp: "Test ISP",
+  },
+};
+
 // Mock the @workspace/auth module
 vi.mock("@workspace/auth", async () => {
   const actual = await vi.importActual("@workspace/auth");
@@ -19,6 +30,7 @@ describe("send-magic-link.function", () => {
 
     const result = await sendMagicLinkFunction({
       email: "allowed@example.com",
+      ...fakeIpData,
     });
 
     expect(result).toEqual({
@@ -31,6 +43,7 @@ describe("send-magic-link.function", () => {
   it("should return an error for an email address not in the allowlist", async () => {
     const result = await sendMagicLinkFunction({
       email: "notallowed@example.com",
+      ...fakeIpData,
     });
 
     expect(result).toEqual({
@@ -44,6 +57,7 @@ describe("send-magic-link.function", () => {
 
     const result = await sendMagicLinkFunction({
       email: "ALLOWED@EXAMPLE.COM",
+      ...fakeIpData,
     });
 
     expect(result).toEqual({
@@ -61,6 +75,7 @@ describe("send-magic-link.function", () => {
 
     const result = await sendMagicLinkFunction({
       email: "allowed@example.com",
+      ...fakeIpData,
     });
 
     expect(result).toEqual({

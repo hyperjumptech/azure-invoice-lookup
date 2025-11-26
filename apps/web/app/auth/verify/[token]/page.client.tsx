@@ -5,11 +5,14 @@ import { Button } from "@workspace/ui/components/button";
 import { useRouter } from "next/navigation";
 import { useResettableActionState } from "use-resettable-action-state";
 import { useEffect } from "react";
+import { getIpBeforeAction } from "@/lib/ip-address";
 
 export const VerifyPageClient = ({ token }: { token: string }) => {
   const [state, formAction, isPending] = useResettableActionState(
     verifyMagicLinkFormAction,
-    { success: false, error: null }
+    { success: false, error: null },
+    undefined,
+    getIpBeforeAction
   );
   const router = useRouter();
 

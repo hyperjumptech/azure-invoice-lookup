@@ -3,6 +3,8 @@ import { z } from "zod";
 import { cacheLife, cacheTag } from "next/cache";
 import { retry } from "@/lib/retry";
 import { billingAccountIds } from "./accounts";
+import { getSessionEmail } from "../auth";
+import { logActivity } from "../log-activity";
 
 const invoiceSchema = z.object({
   properties: z.object({
@@ -202,6 +204,28 @@ export const getAzureInvoiceDocumentFromAllBillingAccounts = async (
     .map((i) => i.value);
 
   if (successfulInvoices.length > 0) {
+    // track activity
+    try {
+      const email = await getSessionEmail();
+      if (email) {
+        await logActivity(
+          "search-invoice",
+          {
+            email,
+            ipAddress: "",
+            geoData: {},
+          },
+          {
+            email,
+            invoiceName,
+            invoice: successfulInvoices[0],
+          }
+        );
+      }
+    } catch (error) {
+      console.error("Error logging activity", error);
+    }
+
     return successfulInvoices[0];
   }
 

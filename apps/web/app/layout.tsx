@@ -4,6 +4,7 @@ import "@workspace/ui/globals.css";
 import { Providers } from "@/components/providers";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { Toaster } from "@workspace/ui/components/sonner";
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />
+            <Toaster />
           </div>
         </Providers>
       </body>

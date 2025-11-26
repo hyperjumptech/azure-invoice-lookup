@@ -1,12 +1,18 @@
 import { z } from "zod";
 import { isEmailAllowed, sendMagicLinkEmail } from "@workspace/auth";
+import { logActivity } from "@/lib/log-activity";
 
 /**
  * The schema of the data for the send magic link function.
  * @param email - The email address to send the magic link to.
  */
 export const sendMagicLinkFunctionSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
+  ip_address: z.ipv4("Invalid IP address"),
+  geo_data: z
+    .string()
+    .transform((val) => JSON.parse(val))
+    .optional(),
 });
 
 /**
@@ -18,7 +24,11 @@ export async function sendMagicLinkFunction(
   data: z.infer<typeof sendMagicLinkFunctionSchema>
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { email: validatedEmail } = data;
+    const {
+      email: validatedEmail,
+      ip_address: validatedIpAddress,
+      geo_data: validatedGeoData,
+    } = data;
 
     if (!isEmailAllowed(validatedEmail)) {
       return {
@@ -27,7 +37,24 @@ export async function sendMagicLinkFunction(
       };
     }
 
-    await sendMagicLinkEmail(validatedEmail);
+    const magicLink = await sendMagicLinkEmail(validatedEmail);
+
+    try {
+      await logActivity(
+        "request-magic-link",
+        {
+          email: validatedEmail,
+          ipAddress: validatedIpAddress,
+          geoData: validatedGeoData,
+        },
+        {
+          email: validatedEmail,
+          link: magicLink,
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
 
     return {
       success: true,

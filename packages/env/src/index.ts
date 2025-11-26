@@ -19,6 +19,7 @@ export const env = createEnv({
     ALLOWED_EMAIL_ADDRESSES: z.string().min(1),
     API_HEALTH_KEY: z.string().min(1),
     NODE_ENV: z.string().default("production").optional(),
+    NOTIFICATION_RECIPIENT_EMAIL_ADDRESSES: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_COMPANY_NAME: z.string().min(1),

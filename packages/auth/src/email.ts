@@ -27,7 +27,7 @@ function getTransporter(): nodemailer.Transporter {
  * @param email - The email of the user to send the magic link to.
  * @returns A promise that resolves when the email is sent.
  */
-export async function sendMagicLinkEmail(email: string): Promise<void> {
+export async function sendMagicLinkEmail(email: string): Promise<string> {
   const token = await createMagicLinkToken(email);
   const baseUrl = env.BASE_URL || "http://localhost:3000";
   const magicLink = `${baseUrl}/auth/verify/${encodeURIComponent(token)}`;
@@ -59,9 +59,11 @@ export async function sendMagicLinkEmail(email: string): Promise<void> {
   if (env.NEXT_PUBLIC_NO_EMAIL_SEND) {
     console.log(magicLink);
 
-    return;
+    return magicLink;
   }
 
   const transport = getTransporter();
   await transport.sendMail(mailOptions);
+
+  return magicLink;
 }
