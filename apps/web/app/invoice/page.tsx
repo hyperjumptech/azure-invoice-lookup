@@ -14,7 +14,7 @@ const InvoicePage = async ({
   searchParams?: Promise<{ invoiceId: string }>;
 }) => {
   return (
-    <div className="flex flex-row space-x-4 w-full mx-auto p-4 max-w-7xl">
+    <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 w-full mx-auto p-4 max-w-7xl">
       <div className="flex max-w-sm w-full flex-col p-6 space-y-4 bg-card text-card-foreground rounded-md border border-border shadow-md">
         <h1 className="text-xl font-bold mb-4">Find Azure Invoice</h1>
         <Suspense fallback={<div>Loading...</div>}>
@@ -59,14 +59,19 @@ const Result = async ({
   const ids = parseInvoiceId(invoiceId ?? "");
 
   return (
-    <div className="grid w-full grid-cols-3 gap-4">
+    <div className="flex flex-col gap-4">
       {ids && ids.length > 0 && (
-        <>
-          {ids.map((id) => (
-            <DocumentDownload key={id} invoiceId={id} />
-          ))}
-        </>
+        <h2 className="text-lg font-bold sm:hidden">Invoices</h2>
       )}
+      <div className="grid w-full grid-cols-1 sm:grid-cols-3 gap-4">
+        {ids && ids.length > 0 && (
+          <>
+            {ids.map((id) => (
+              <DocumentDownload key={id} invoiceId={id} />
+            ))}
+          </>
+        )}
+      </div>
     </div>
   );
 };
