@@ -40,7 +40,7 @@ export const LoginForm = () => {
         <div className="text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-md px-3 py-2">
           {env.NEXT_PUBLIC_NO_EMAIL_SEND
             ? "Email sending disabled. See the server log to see the magic link."
-            : "Check your email! We&apos;ve sent you a magic link to sign in."}
+            : "Check your email! We've sent you a magic link to sign in."}
         </div>
       )}
 
