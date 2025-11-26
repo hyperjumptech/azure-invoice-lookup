@@ -1,0 +1,29 @@
+---
+title: Requirements
+---
+
+To get the application working, you need to have the following variables set in the environment variables.
+
+## Azure variables
+
+For Azure-related variables, you need to create an application in App Registrations in Azure Portal. Once created, you also need to add the application to the IAM of the billing accounts that you want to search for invoices and transactions.
+
+- Azure Tenant ID. You can find the Tenant ID in the Overview page.
+- Azure Client ID. You can find the Client ID in the Overview page.
+- Azure Client Secret. You can find the Client Secret in the Certificates & Secrets page.
+- Azure Billing Account ID. This will be used to search for invoices and transactions. You can provide multiple billing account IDs separated by commas.
+
+## Email variables
+
+Since the app uses password-less authentication, you need to an SMTP server to send magic links to the users. You can use any SMTP server that supports SMTP authentication, like Gmail.
+
+- SMTP Host. The hostname of the SMTP server.
+- SMTP Port. The port of the SMTP server.
+- SMTP Username. The username of the SMTP server.
+- SMTP Password. The password of the SMTP server.
+- SMTP From. The email address that will be used to send the magic links.
+
+## Security variables
+
+- JWT Secret. The random secret key for the JWT tokens. Don't forget to keep it secret!
+- Allowed Email Addresses. The list of email addresses that are allowed to login.
