@@ -6,12 +6,35 @@ The application uses a password-less authentication system without the need for 
 
 ## The flow
 
+<Mermaid
+  chart="
+sequenceDiagram
+    participant User
+    participant System
+    
+    User->>System: Enters email address
+    System->>System: Checks if email is in ALLOWED_EMAIL_ADDRESSES
+    alt Email is allowed
+        System->>System: Creates 5-minute JWT magic link token
+        System->>User: Sends email with magic link via SMTP
+        User->>System: Clicks link to verification page
+        User->>System: Clicks button to verify token
+        System->>System: Creates 1-day session JWT
+        System->>System: Sets secure HTTP-only cookie
+        System->>User: Redirects to /invoice
+    else Email is not allowed
+        System->>User: Access denied
+    end
+"
+/>
+
 - User enters email address
 - System checks if email is in `ALLOWED_EMAIL_ADDRESSES`
 - If allowed, creates 5-minute JWT magic link token
 - Sends email with magic link via SMTP
-- User clicks link, which verifies the token
-- System creates 1-day session JWT and sets HTTP-only cookie
+- User clicks link to a page to verify the token
+- User clicks the button to verify the token
+- System creates 1-day session JWT and sets secure HTTP-only cookie
 - User is redirected to `/invoice`
 
 ## Allowed email addresses

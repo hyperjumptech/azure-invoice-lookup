@@ -1,0 +1,14 @@
+---
+title: Audit
+---
+
+The application logs all user activities, including login, logout, and invoice searches by sending the activity data to the email addresses defined in the `NOTIFICATION_RECIPIENT_EMAIL_ADDRESSES` environment variable.
+
+## Audit data
+
+The audit data includes the following information:
+
+- User data: email address, IP address, and geo data
+- Activity type (login, logout, invoice search)
+- Activity timestamp
+- Activity data

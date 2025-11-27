@@ -1,5 +1,5 @@
 {
   "title": "About",
   "icon": "MyIcon",
-  "pages": ["index", "requirement", "auth"]
+  "pages": ["index", "requirement", "auth", "audit"]
 }
