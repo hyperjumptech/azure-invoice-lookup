@@ -1,6 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { verifyMagicLinkFormAction } from "./verify-magic-link.server.function";
 
+const fakeIpData = {
+  ip_address: "127.0.0.1",
+  geo_data: {
+    ip: "127.0.0.1",
+    city: "Test City",
+    region: "Test Region",
+    country: "Test Country",
+    isp: "Test ISP",
+  },
+};
+
 const verifyMagicLinkFunctionMock = vi.hoisted(() => vi.fn());
 vi.mock("./verify-magic-link.function", async () => {
   const actual = await vi.importActual<
@@ -26,11 +37,15 @@ describe("verifyMagicLinkFormAction", () => {
 
       const formData = new FormData();
       formData.append("token", "valid-token-123");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await verifyMagicLinkFormAction(null, formData);
 
       expect(verifyMagicLinkFunctionMock).toHaveBeenCalledWith({
         token: "valid-token-123",
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: true,
@@ -46,6 +61,8 @@ describe("verifyMagicLinkFormAction", () => {
 
       const formData = new FormData();
       formData.append("token", "valid-token-123");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const previousState = { some: "state" };
       const result = await verifyMagicLinkFormAction(previousState, formData);
@@ -91,12 +108,16 @@ describe("verifyMagicLinkFormAction", () => {
 
       const formData = new FormData();
       formData.append("token", "   ");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await verifyMagicLinkFormAction(null, formData);
 
       // Schema allows whitespace (min(1) passes), so function is called
       expect(verifyMagicLinkFunctionMock).toHaveBeenCalledWith({
         token: "   ",
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: false,
@@ -114,11 +135,15 @@ describe("verifyMagicLinkFormAction", () => {
 
       const formData = new FormData();
       formData.append("token", "invalid-token");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await verifyMagicLinkFormAction(null, formData);
 
       expect(verifyMagicLinkFunctionMock).toHaveBeenCalledWith({
         token: "invalid-token",
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: false,
@@ -134,11 +159,15 @@ describe("verifyMagicLinkFormAction", () => {
 
       const formData = new FormData();
       formData.append("token", "expired-token");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await verifyMagicLinkFormAction(null, formData);
 
       expect(verifyMagicLinkFunctionMock).toHaveBeenCalledWith({
         token: "expired-token",
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: false,
@@ -154,11 +183,15 @@ describe("verifyMagicLinkFormAction", () => {
 
       const formData = new FormData();
       formData.append("token", "valid-magic-link-token");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await verifyMagicLinkFormAction(null, formData);
 
       expect(verifyMagicLinkFunctionMock).toHaveBeenCalledWith({
         token: "valid-magic-link-token",
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: true,
@@ -177,12 +210,16 @@ describe("verifyMagicLinkFormAction", () => {
       const formData = new FormData();
       formData.append("token", "valid-token");
       formData.append("extra", "field");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await verifyMagicLinkFormAction(null, formData);
 
       // Extra fields should be stripped by schema validation
       expect(verifyMagicLinkFunctionMock).toHaveBeenCalledWith({
         token: "valid-token",
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: true,
@@ -194,6 +231,8 @@ describe("verifyMagicLinkFormAction", () => {
       const formData = new FormData();
       formData.append("token", "first-token");
       formData.append("token", "second-token");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await verifyMagicLinkFormAction(null, formData);
 
@@ -215,11 +254,15 @@ describe("verifyMagicLinkFormAction", () => {
       const longToken = "a".repeat(1000);
       const formData = new FormData();
       formData.append("token", longToken);
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await verifyMagicLinkFormAction(null, formData);
 
       expect(verifyMagicLinkFunctionMock).toHaveBeenCalledWith({
         token: longToken,
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: true,

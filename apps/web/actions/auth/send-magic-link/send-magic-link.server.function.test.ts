@@ -1,6 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { sendMagicLinkFormAction } from "./send-magic-link.server.function";
 
+const fakeIpData = {
+  ip_address: "127.0.0.1",
+  geo_data: {
+    ip: "127.0.0.1",
+    city: "Test City",
+    region: "Test Region",
+    country: "Test Country",
+    isp: "Test ISP",
+  },
+};
+
 const sendMagicLinkFunctionMock = vi.hoisted(() => vi.fn());
 vi.mock("./send-magic-link.function", async () => {
   const actual = await vi.importActual<
@@ -26,11 +37,15 @@ describe("sendMagicLinkFormAction", () => {
 
       const formData = new FormData();
       formData.append("email", "test@example.com");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await sendMagicLinkFormAction(null, formData);
 
       expect(sendMagicLinkFunctionMock).toHaveBeenCalledWith({
         email: "test@example.com",
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: true,
@@ -46,11 +61,15 @@ describe("sendMagicLinkFormAction", () => {
 
       const formData = new FormData();
       formData.append("email", "TEST@EXAMPLE.COM");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await sendMagicLinkFormAction(null, formData);
 
       expect(sendMagicLinkFunctionMock).toHaveBeenCalledWith({
         email: "TEST@EXAMPLE.COM",
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: true,
@@ -66,6 +85,8 @@ describe("sendMagicLinkFormAction", () => {
 
       const formData = new FormData();
       formData.append("email", "test@example.com");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const previousState = { some: "state" };
       const result = await sendMagicLinkFormAction(previousState, formData);
@@ -139,11 +160,15 @@ describe("sendMagicLinkFormAction", () => {
 
       const formData = new FormData();
       formData.append("email", "notallowed@example.com");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await sendMagicLinkFormAction(null, formData);
 
       expect(sendMagicLinkFunctionMock).toHaveBeenCalledWith({
         email: "notallowed@example.com",
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: false,
@@ -159,11 +184,15 @@ describe("sendMagicLinkFormAction", () => {
 
       const formData = new FormData();
       formData.append("email", "allowed@example.com");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await sendMagicLinkFormAction(null, formData);
 
       expect(sendMagicLinkFunctionMock).toHaveBeenCalledWith({
         email: "allowed@example.com",
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: false,
@@ -182,12 +211,16 @@ describe("sendMagicLinkFormAction", () => {
       const formData = new FormData();
       formData.append("email", "test@example.com");
       formData.append("extra", "field");
+      formData.append("ip_address", fakeIpData.ip_address);
+      formData.append("geo_data", JSON.stringify(fakeIpData.geo_data));
 
       const result = await sendMagicLinkFormAction(null, formData);
 
       // Extra fields should be stripped by schema validation
       expect(sendMagicLinkFunctionMock).toHaveBeenCalledWith({
         email: "test@example.com",
+        ip_address: fakeIpData.ip_address,
+        geo_data: fakeIpData.geo_data,
       });
       expect(result).toEqual({
         success: true,
