@@ -1,12 +1,16 @@
-import { NextResponse } from "next/server";
+import { connection, NextRequest, NextResponse } from "next/server";
 
 /**
  * Server-side API route to proxy IP geolocation requests.
  * This avoids CORS issues by making the request from the server instead of the client.
+ * With Cache Components enabled, accessing connection() marks this route as dynamic.
  */
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  // Access connection() first to explicitly mark this route as dynamic and prevent prerendering
+  await connection();
+
   try {
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
     const ip = searchParams.get("ip");
 
     if (!ip) {
