@@ -13,3 +13,4 @@ catalog:
   "zod": "^3"
   "@turbo/gen": "^2.6.1"
   "tailwindcss": "^4.1.11"
+  "next": "^16.0.7"
